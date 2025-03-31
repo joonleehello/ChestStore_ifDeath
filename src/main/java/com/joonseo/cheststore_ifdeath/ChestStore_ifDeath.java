@@ -92,11 +92,23 @@ public final class ChestStore_ifDeath extends JavaPlugin implements Listener {
 
             InventoryHolder temp = chest_inv.getHolder();
 
-            if (temp instanceof org.bukkit.block.Chest){
+            if (temp instanceof org.bukkit.block.DoubleChest){
 
-                org.bukkit.block.Chest chest_holder = (org.bukkit.block.Chest) temp;
-                chest_holder.setCustomName(ChatColor.DARK_RED + player.getName() + "의 시체");
-                chest_holder.update();
+                org.bukkit.block.DoubleChest chest_holder = (org.bukkit.block.DoubleChest) temp;
+
+                if(chest_holder.getLeftSide() instanceof org.bukkit.block.Chest){
+                    org.bukkit.block.Chest left = (org.bukkit.block.Chest) chest_holder.getLeftSide();
+                    left.setCustomName(ChatColor.DARK_RED + player.getName() +"의 시체");
+                    left.update();
+                }
+
+                if(chest_holder.getRightSide() instanceof org.bukkit.block.Chest){
+                    org.bukkit.block.Chest right = (org.bukkit.block.Chest) chest_holder.getRightSide();
+                    right.setCustomName(ChatColor.DARK_RED + player.getName() +"의 시체");
+                    right.update();
+                }
+
+
 
             }
 
