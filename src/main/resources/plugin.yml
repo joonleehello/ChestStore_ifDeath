@@ -1,0 +1,4 @@
+name: ChestStore_ifDeath
+version: '${project.version}'
+main: com.joonseo.cheststore_ifdeath.ChestStore_ifDeath
+api-version: '1.21'
