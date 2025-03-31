@@ -1,8 +1,10 @@
 package com.joonseo.cheststore_ifdeath;
 
 import org.bukkit.*;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,24 +49,37 @@ public final class ChestStore_ifDeath extends JavaPlugin implements Listener {
                 ChatColor.YELLOW + " Z: " + ChatColor.GREEN + loc.getBlockZ();
 
         player.sendMessage(ChatColor.AQUA+"당신은 "+ message +ChatColor.AQUA + "에서 " + ChatColor.GREEN + time_message
-        + ChatColor.AQUA + " 에 죽었습니다.");
+                + ChatColor.AQUA + " 에 죽었습니다.");
 
 
         Location chest1loc = loc.getBlock().getLocation();
         Location chest2loc = chest1loc.clone().add(1,0,0);
 
-        chest1loc.getBlock().setType(Material.CHEST);
-        chest2loc.getBlock().setType(Material.CHEST);
+        Block block1 = chest1loc.getBlock();
+        block1.setType(Material.CHEST);
 
-        BlockState state1 = chest1loc.getBlock().getState();
-        BlockState state2 = chest2loc.getBlock().getState();
+        Block block2 = chest2loc.getBlock();
+        block2.setType(Material.CHEST);
 
-        if (state1 instanceof Chest && state2 instanceof Chest){
+        BlockData data1 = block1.getBlockData();
+        BlockData data2 = block2.getBlockData();
 
-            Chest chest1 = (Chest) state1;
-            Chest chest2 = (Chest) state2;
+        if (data1 instanceof org.bukkit.block.data.type.Chest && data2 instanceof org.bukkit.block.data.type.Chest){
 
-            Inventory chest_inv = chest1.getInventory();
+            Chest chestdata1 = (Chest) data1;
+            Chest chestdata2 = (Chest) data2;
+
+            chestdata1.setFacing(BlockFace.NORTH);
+            chestdata1.setType(Chest.Type.LEFT);
+
+            chestdata2.setFacing(BlockFace.NORTH);
+            chestdata2.setType(Chest.Type.RIGHT);
+
+            block1.setBlockData(chestdata1,true);
+            block2.setBlockData(chestdata2,true);
+
+
+            Inventory chest_inv = ((org.bukkit.block.Chest)block1.getState()).getInventory();
 
             for (ItemStack item : e.getDrops()) {
                 if(item != null) {
@@ -75,10 +90,11 @@ public final class ChestStore_ifDeath extends JavaPlugin implements Listener {
             e.getDrops().clear();
 
 
-            InventoryHolder temp = chest1.getInventory().getHolder();
-            if(temp instanceof Chest){
+            InventoryHolder temp = chest_inv.getHolder();
 
-                Chest chest_holder = (Chest) temp;
+            if (temp instanceof org.bukkit.block.Chest){
+
+                org.bukkit.block.Chest chest_holder = (org.bukkit.block.Chest) temp;
                 chest_holder.setCustomName(ChatColor.DARK_RED + player.getName() + "의 시체");
                 chest_holder.update();
 
