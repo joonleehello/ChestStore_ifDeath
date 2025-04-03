@@ -3,12 +3,14 @@ package com.joonseo.cheststore_ifdeath;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -118,6 +120,82 @@ public final class ChestStore_ifDeath extends JavaPlugin implements Listener {
 
 
         }
+
+
+
+
+
+    }
+
+
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e){
+
+        Player player = (Player) e.getPlayer();
+        Inventory chest_inv = e.getInventory();
+        InventoryHolder holder = chest_inv.getHolder();
+
+        boolean isEmpty = true;
+
+        for (ItemStack item : chest_inv.getContents()){
+
+            if(item != null && item.getType() != Material.AIR){
+
+                isEmpty = false;
+                break;
+            }
+
+
+        }
+
+        if(!isEmpty) return;
+
+        if(holder instanceof DoubleChest){
+            DoubleChest d_chest = (DoubleChest) holder;
+
+            String name = null;
+
+            if (d_chest.getLeftSide() instanceof org.bukkit.block.Chest){
+
+                name = ((org.bukkit.block.Chest) d_chest.getLeftSide()).getCustomName();
+            }
+
+            if(name != null && name.contains("시체")){
+
+                if (d_chest.getLeftSide() instanceof org.bukkit.block.Chest){
+                    ((org.bukkit.block.Chest) d_chest.getLeftSide()).getBlock().setType(Material.AIR);
+                }
+
+
+                if (d_chest.getRightSide() instanceof org.bukkit.block.Chest){
+                    ((org.bukkit.block.Chest) d_chest.getRightSide()).getBlock().setType(Material.AIR);
+                }
+
+                player.sendMessage(ChatColor.GREEN + "시체 상자에서 아이템을 모두 꺼냈기에 상자가 사라졌습니다.");
+
+            }
+
+        }
+
+        else if(holder instanceof org.bukkit.block.Chest){
+
+            org.bukkit.block.Chest chest = (org.bukkit.block.Chest) holder;
+            String name = chest.getCustomName();
+
+            if(name != null && name.contains("시체")) {
+
+                chest.getBlock().setType(Material.AIR);
+                player.sendMessage(ChatColor.GREEN + "시체 상자에서 아이템을 모두 꺼냈기에 상자가 사라졌습니다.");
+            }
+
+
+        }
+
+
+
+
+
 
 
 
